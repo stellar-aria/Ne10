@@ -29,7 +29,7 @@
  * NE10 Library : physics/NE10_physics.c
  */
 
-#include <stdio.h>
+
 
 #include "NE10_physics.h"
 

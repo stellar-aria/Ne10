@@ -35,7 +35,7 @@
 #include <assert.h>
 #include <arm_neon.h>
 
-#include <stdio.h>
+
 #include <stdlib.h>
 
 ne10_result_t ne10_divc_float_neon (ne10_float32_t * dst, ne10_float32_t * src, const ne10_float32_t cst, ne10_uint32_t count)
