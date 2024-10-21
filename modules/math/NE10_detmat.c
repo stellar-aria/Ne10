@@ -33,7 +33,7 @@
 #include "macros.h"
 #include "NE10_detmat.c.h"
 
-#include <assert.h>
+
 
 ne10_result_t ne10_detmat_2x2f_c (ne10_float32_t * dst, ne10_mat2x2f_t * src, ne10_uint32_t count)
 {

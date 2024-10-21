@@ -32,7 +32,7 @@
 #include "NE10_types.h"
 #include "macros.h"
 
-#include <assert.h>
+
 #include <arm_neon.h>
 
 

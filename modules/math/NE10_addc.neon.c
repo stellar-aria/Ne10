@@ -29,7 +29,7 @@
  * NE10 Library : math/NE10_addc.neon.c
  */
 
-#include <assert.h>
+
 #include <arm_neon.h>
 
 #include "NE10.h"

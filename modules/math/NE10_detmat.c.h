@@ -35,7 +35,7 @@
 #include "NE10_types.h"
 #include "macros.h"
 
-#include <assert.h>
+
 
 static inline ne10_float32_t DET2x2( ne10_mat2x2f_t * mat )
 {

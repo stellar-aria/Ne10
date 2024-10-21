@@ -33,7 +33,7 @@
 #include "macros.h"
 #include <math.h>
 
-#include <assert.h>
+
 
 inline void swap (ne10_float32_t *a, ne10_float32_t *b)
 {

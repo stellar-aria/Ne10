@@ -32,7 +32,7 @@
 #include "NE10_types.h"
 #include "macros.h"
 
-#include <assert.h>
+
 
 ne10_result_t ne10_mulcmatvec_cm2x2f_v2f_c (ne10_vec2f_t * dst, const ne10_mat2x2f_t * cst, ne10_vec2f_t * src, ne10_uint32_t count)
 {

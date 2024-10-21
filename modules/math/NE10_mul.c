@@ -32,7 +32,7 @@
 #include "NE10_types.h"
 #include "macros.h"
 
-#include <assert.h>
+
 
 ne10_result_t ne10_mul_float_c (ne10_float32_t * dst, ne10_float32_t * src1, ne10_float32_t * src2, ne10_uint32_t count)
 {

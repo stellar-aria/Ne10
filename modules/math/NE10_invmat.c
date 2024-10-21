@@ -34,7 +34,7 @@
 #include "NE10_detmat.c.h"
 #include <math.h>
 
-#include <assert.h>
+
 
 // This macro is used to determine floating point values that are small enough to be consiedered nearly zero
 #define IS_FLOAT_NEAR_ZERO(x) ( ((fabs(x))<(1e-12)) ? 1 : 0 )

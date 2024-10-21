@@ -32,7 +32,7 @@
 #include "NE10_types.h"
 #include "macros.h"
 
-#include <assert.h>
+
 
 ne10_result_t ne10_rsbc_float_c (ne10_float32_t * dst, ne10_float32_t * src, const ne10_float32_t cst, ne10_uint32_t count)
 {
