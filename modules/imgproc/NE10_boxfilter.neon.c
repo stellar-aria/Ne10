@@ -267,7 +267,7 @@ void ne10_img_boxfilter_col_neon (const ne10_uint8_t *src,
              (kernel.y > 1));
 
     ne10_int32_t x, y, k;
-    ne10_uint16_t *sum_row = (ne10_uint16_t *) malloc (src_sz.x *
+    ne10_uint16_t *sum_row = (ne10_uint16_t *) NE10_MALLOC (src_sz.x *
                              RGBA_CH *
                              sizeof (ne10_uint16_t));
     ne10_uint16_t mul = (1 << DIV_SHIFT) / kernel.y;
@@ -407,7 +407,7 @@ void ne10_img_boxfilter_col_neon (const ne10_uint8_t *src,
         }
     }
 
-    free (sum_row);
+    NE10_FREE (sum_row);
 }
 
 /**
@@ -440,7 +440,7 @@ void ne10_img_boxfilter_rgba8888_neon (const ne10_uint8_t *src,
     ne10_uint32_t mem_bytes = (sizeof (ne10_uint8_t) * src_sz.x * src_sz.y + 2)
         * RGBA_CH;
 
-    ne10_uint8_t *dst_buf = (ne10_uint8_t *) malloc (mem_bytes);
+    ne10_uint8_t *dst_buf = (ne10_uint8_t *) NE10_MALLOC (mem_bytes);
 
     if (!dst_buf)
     {
@@ -499,5 +499,5 @@ void ne10_img_boxfilter_rgba8888_neon (const ne10_uint8_t *src,
                                  border_t,
                                  border_b);
 
-    free (dst_buf);
+    NE10_FREE (dst_buf);
 }

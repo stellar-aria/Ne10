@@ -24,15 +24,15 @@
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 #  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.26)
 
-project(NE10 C CXX ASM)
+project(NE10
+    VERSION 1.3.0
+    LANGUAGES C CXX ASM)
 
-option(NE10_BUILD_SHARED "Build NE10 shared libraries" OFF)
-option(NE10_BUILD_STATIC "Build NE10 static libraries" ON)
-option(NE10_BUILD_EXAMPLES "Build NE10 examples" ON)
+option(NE10_BUILD_EXAMPLES "Build NE10 examples" OFF)
 
-#hard float abi
+# hard float abi
 option(NE10_ARM_HARD_FLOAT "Build NE10 for hard float abi" ON)
 
 #unit test options
@@ -48,126 +48,31 @@ if (NE10_BUILD_UNIT_TEST)
     option(NE10_DEBUG_TRACE "Print debug trace" OFF)
 endif()
 
-#check if proper platform is set.
-if((NOT ANDROID_PLATFORM) AND (NOT GNULINUX_PLATFORM) AND (NOT IOS_PLATFORM))
-    message(FATAL_ERROR "No platform is defined! see doc/building.md for build instructions.")
-endif()
-
-if(DEFINED NE10_ANDROID_TARGET_ARCH)
-    if(${NE10_ANDROID_TARGET_ARCH} STREQUAL "armv7")
-        set(NE10_TARGET_ARCH "armv7")
-    else()
-        set(NE10_TARGET_ARCH "aarch64")
-    endif()
-endif()
-
-if(NOT DEFINED NE10_LINUX_TARGET_ARCH AND DEFINED ENV{NE10_LINUX_TARGET_ARCH})
-    set(NE10_LINUX_TARGET_ARCH $ENV{NE10_LINUX_TARGET_ARCH})
-endif()
-if(DEFINED NE10_LINUX_TARGET_ARCH)
-    if(${NE10_LINUX_TARGET_ARCH} STREQUAL "armv7")
-        set(NE10_TARGET_ARCH "armv7")
-    else()
-        set(NE10_TARGET_ARCH "aarch64")
-    endif()
-endif()
-
-if(DEFINED NE10_IOS_TARGET_ARCH)
-    if(${NE10_IOS_TARGET_ARCH} STREQUAL "armv7")
-        set(NE10_TARGET_ARCH "armv7")
-    else()
-        set(NE10_TARGET_ARCH "aarch64")
-    endif()
-endif()
-
-message("-- Target architecture: ${NE10_TARGET_ARCH}")
+message("-- Ne10 target architecture: ${NE10_TARGET_ARCH}")
 
 #select functionalities to be compiled
 if("${NE10_TARGET_ARCH}" STREQUAL "armv7")
     # Math module has not been optimized for aarch64.
-    option(NE10_ENABLE_MATH "Build math functionalities to NE10" ON)
+    option(NE10_ENABLE_MATH "Build math functionalities to NE10" OFF)
     # Physics module has not been optimized for aarch64.
-    option(NE10_ENABLE_PHYSICS "Build physics functionalities to NE10" ON)
+    option(NE10_ENABLE_PHYSICS "Build physics functionalities to NE10" OFF)
 endif()
 option(NE10_ENABLE_DSP "Build dsp functionalities to NE10" ON)
-option(NE10_ENABLE_IMGPROC "Build image processing functionalities to NE10" ON)
+option(NE10_ENABLE_IMGPROC "Build image processing functionalities to NE10" OFF)
 
 set(NE10_VERSION 10)
 
-if(BUILD_DEBUG)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -O0 -DDEBUG -g -Wall -Wno-unused-but-set-variable")
-    message("-- Building type: DEBUG")
-else(BUILD_DEBUG)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing -O2 -DNDEBUG")
-    message("-- Building type: RELEASE")
-endif(BUILD_DEBUG)
+add_compile_options(
+    -fno-strict-aliasing
+    $<$<CONFIG:DEBUG>:-Wall>
+    $<$<CONFIG:DEBUG>:-Wno-unused-but-set-variable>
+)
 
 # By default, we compile c intrinsic.
-set(NE10_ASM_OPTIMIZATION off)
+option(NE10_ASM_OPTIMIZATION OFF)
+message("-- Ne10 assembly optimization: ${NE10_ASM_OPTIMIZATION}")
 
-if(ANDROID_PLATFORM)
-    if(NE10_ARM_HARD_FLOAT)
-        set(FLOAT_ABI "hard")
-    else()
-        set(FLOAT_ABI "softfp")
-    endif()
-
-    #TODO: Fine tune pic and pie flag for executable, share library and static library.
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --sysroot=${NDK_SYSROOT_PATH} -pie")
-    string(APPEND CMAKE_C_FLAGS " -isysroot ${NDK_ISYSROOT_PATH}")
-    add_definitions(-D__ANDROID_API__=${ANDROID_API_LEVEL})
-
-    # Adding cflags for armv7. Aarch64 does not need such flags.
-    if(${NE10_TARGET_ARCH} STREQUAL "armv7")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mthumb -march=armv7-a -mfloat-abi=${FLOAT_ABI} -mfpu=vfp3")
-        if(NE10_ARM_HARD_FLOAT)
-            # "--no-warn-mismatch" is needed for linker to suppress linker error about not all functions use VFP register to pass argument, eg.
-            #   .../arm-linux-androideabi/bin/ld: error: ..../test-float.o
-            #           uses VFP register arguments, output does not
-            # There is call convension mismatch between NDK's crt*.o and ne10's object files.
-            # crt*.o still uses softfp while ne10's object files use hard floating point.
-            # Refer $NDK/tests/device/hard-float/jni/Android.mk for more details.
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,--no-warn-mismatch")
-        endif()
-        # Turn on asm optimization for Android on ARM v7.
-        set(NE10_ASM_OPTIMIZATION on)
-    endif()
-    message("-- Loaded toolchain:
-    ${CMAKE_C_COMPILER}
-    ${CMAKE_CXX_COMPILER}
-    ${CMAKE_ASM_COMPILER}")
-    message("-- CMAKE_C_FLAGS:
-    ${CMAKE_C_FLAGS}")
-elseif(GNULINUX_PLATFORM)
-    if("${NE10_TARGET_ARCH}" STREQUAL "armv7")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mthumb -march=armv7-a -mfpu=vfp3 -funsafe-math-optimizations")
-      set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -mthumb -march=armv7-a -mfpu=neon")
-      # Turn on asm optimization for Linux on ARM v7.
-      set(NE10_ASM_OPTIMIZATION on)
-    endif()
-elseif(IOS_PLATFORM)
-    #set minimal target ios version.
-    if(NOT MIN_IOS_VER)
-      set(MIN_IOS_VER "7.0")
-    endif()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -miphoneos-version-min=" ${MIN_IOS_VER})
-    set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -mfpu=neon -miphoneos-version-min=" ${MIN_IOS_VER})
-
-    if(${NE10_TARGET_ARCH} STREQUAL "armv7")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfpu=vfp3 -arch armv7 -arch armv7s")
-        set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -arch armv7 -arch armv7s")
-    else()
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch arm64")
-    endif()
-
-    message("-- CFLAGS: ${CMAKE_C_FLAGS}")
-
-    string(REPLACE ";" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
-    string(REPLACE ";" "" CMAKE_ASM_FLAGS ${CMAKE_ASM_FLAGS})
-endif()
-
-set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
+set(CMAKE_C_STANDARD 99)
 
 # Add NE10 library sub-directory.
 add_subdirectory(modules)
@@ -180,17 +85,9 @@ if(NE10_BUILD_UNIT_TEST)
     add_subdirectory(test)
 endif()
 
-if(ANDROID_PLATFORM AND ANDROID_DEMO)
-    add_subdirectory(android/NE10Demo/jni)
-endif()
-
 # Make sure we are compiling for an ARM system.
 # This is a verbose fail-fast in case we are trying to compile for non-ARM;
 # otherwise it would fail at `make` with obscure errors.
 if(GNULINUX_PLATFORM AND (NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^arm"))
     message(FATAL_ERROR "You are trying to compile for non-ARM (CMAKE_SYSTEM_PROCESSOR='${CMAKE_SYSTEM_PROCESSOR}')! see doc/building.md for cross compilation instructions.")
-endif()
-
-if(IOS_PLATFORM AND IOS_DEMO)
-    add_subdirectory(ios)
 endif()

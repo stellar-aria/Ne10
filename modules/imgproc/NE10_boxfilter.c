@@ -362,7 +362,7 @@ void ne10_img_boxfilter_rgba8888_c (const ne10_uint8_t *src,
     anchor.x = kernel.x / 2;
     anchor.y = kernel.y / 2;
 
-    ne10_uint8_t *dst_buf = (ne10_uint8_t *) malloc (sizeof (ne10_uint8_t) *
+    ne10_uint8_t *dst_buf = (ne10_uint8_t *) NE10_MALLOC (sizeof (ne10_uint8_t) *
                             src_sz.x *
                             src_sz.y *
                             RGBA_CH);
@@ -427,5 +427,5 @@ void ne10_img_boxfilter_rgba8888_c (const ne10_uint8_t *src,
                               border_t,
                               border_b);
 
-    free (dst_buf);
+    NE10_FREE (dst_buf);
 }

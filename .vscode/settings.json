@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.scons": "python",
+    "*.cppm": "cpp",
+    "stdio.h": "c"
+  }
+}

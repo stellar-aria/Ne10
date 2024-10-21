@@ -25,27 +25,12 @@
 #  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# header
-include_directories (
-    ${PROJECT_SOURCE_DIR}/inc
-)
-
 file(GLOB SAMPLE_SOURCE_FILES "${PROJECT_SOURCE_DIR}/samples/*.c")
 
-if(NE10_BUILD_SHARED)
-    add_executable(NE10_test_dynamic ${SAMPLE_SOURCE_FILES})
-    target_link_libraries (
-        NE10_test_dynamic
-        NE10_test
-        m
-    )
-endif()
 
-if(NE10_BUILD_STATIC)
-    add_executable(NE10_test_static ${SAMPLE_SOURCE_FILES})
-    target_link_libraries (
-        NE10_test_static
-        NE10
-        m
-    )
-endif()
+add_executable(NE10_test_static ${SAMPLE_SOURCE_FILES})
+target_link_libraries (
+    NE10_test_static
+    NE10
+    m
+)

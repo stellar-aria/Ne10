@@ -557,7 +557,7 @@ ne10_fft_cfg_int32_t ne10_fft_alloc_c2c_int32_neon (ne10_int32_t nfft)
  */
 void ne10_fft_destroy_c2c_float32 (ne10_fft_cfg_float32_t cfg)
 {
-    free(cfg);
+    NE10_FREE(cfg);
 }
 
 /**
@@ -567,7 +567,7 @@ void ne10_fft_destroy_c2c_float32 (ne10_fft_cfg_float32_t cfg)
  */
 void ne10_fft_destroy_c2c_int32 (ne10_fft_cfg_int32_t cfg)
 {
-    free (cfg);
+    NE10_FREE (cfg);
 }
 
 /**
@@ -577,7 +577,7 @@ void ne10_fft_destroy_c2c_int32 (ne10_fft_cfg_int32_t cfg)
  */
 void ne10_fft_destroy_c2c_int16 (ne10_fft_cfg_int16_t cfg)
 {
-    free (cfg);
+    NE10_FREE (cfg);
 }
 
 /** @} */ // C2C_FFT_IFFT
@@ -594,7 +594,7 @@ void ne10_fft_destroy_c2c_int16 (ne10_fft_cfg_int16_t cfg)
  */
 void ne10_fft_destroy_r2c_float32 (ne10_fft_r2c_cfg_float32_t cfg)
 {
-    free(cfg);
+    NE10_FREE(cfg);
 }
 
 /**
@@ -604,7 +604,7 @@ void ne10_fft_destroy_r2c_float32 (ne10_fft_r2c_cfg_float32_t cfg)
  */
 void ne10_fft_destroy_r2c_int32 (ne10_fft_r2c_cfg_int32_t cfg)
 {
-    free (cfg);
+    NE10_FREE (cfg);
 }
 
 /**
@@ -614,7 +614,7 @@ void ne10_fft_destroy_r2c_int32 (ne10_fft_r2c_cfg_int32_t cfg)
  */
 void ne10_fft_destroy_r2c_int16 (ne10_fft_r2c_cfg_int16_t cfg)
 {
-    free (cfg);
+    NE10_FREE (cfg);
 }
 
 /** @} */ // R2C_FFT_IFFT
